@@ -7,7 +7,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { Provider } from './provider.schema';
+import { Provider } from '../schemas/provider.schema';
 import { ProvidersService } from './providers.service';
 
 @Controller('providers')
