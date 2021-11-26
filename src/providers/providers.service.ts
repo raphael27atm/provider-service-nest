@@ -20,7 +20,11 @@ export class ProvidersService {
     return newProvider.save();
   }
 
-  async show(id: string, provider: Provider): Promise<Provider> {
+  async show(id: string): Promise<Provider> {
+    return this.providerModel.findById(id).exec();
+  }
+
+  async update(id: string, provider: Provider): Promise<Provider> {
     return this.providerModel.findByIdAndUpdate(id, provider).exec();
   }
 

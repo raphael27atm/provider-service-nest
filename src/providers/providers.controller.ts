@@ -19,6 +19,11 @@ export class ProvidersController {
     return this.providersService.all();
   }
 
+  @Get(':id')
+  async show(@Param('id') id: string): Promise<Provider> {
+    return this.providersService.show(id);
+  }
+
   @Post()
   async create(@Body() provider: Provider): Promise<Provider> {
     return this.providersService.create(provider);
