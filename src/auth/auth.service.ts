@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -9,6 +9,8 @@ import { User } from './interfaces/user.interface';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     @InjectModel('User') private userModel: Model<User>,
     private jwtService: JwtService,
@@ -33,19 +35,20 @@ export class AuthService {
 
   async signIn(user: User) {
     const payload = { username: user.username, sub: user._id };
+
     return {
       accessToken: this.jwtService.sign(payload),
     };
   }
 
-  async validateUser(username: string, pass: string): Promise<User> {
+  async validateUser(username: string, password: string): Promise<User> {
     const user = await this.userModel.findOne({ username });
 
     if (!user) {
       return null;
     }
 
-    const valid = await bcrypt.compare(pass, user.password);
+    const valid = await bcrypt.compare(password, user.password);
 
     if (valid) {
       return user;
