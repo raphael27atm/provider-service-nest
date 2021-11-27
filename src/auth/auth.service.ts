@@ -16,7 +16,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
+  async signUp(authCredentialsDto: AuthCredentialsDto) {
     const { username, password, name } = authCredentialsDto;
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -29,6 +29,14 @@ export class AuthService {
 
     try {
       await user.save();
+
+      const userPersisted = await this.showUser(username);
+
+      const payload = { username, sub: userPersisted._id };
+
+      return {
+        accessToken: this.jwtService.sign(payload),
+      };
     } catch (error) {
       if (error.code === 11000) {
         throw new ConflictException('User already exists');
@@ -59,5 +67,15 @@ export class AuthService {
     }
 
     return null;
+  }
+
+  async showUser(username: string): Promise<User> {
+    const user = await this.userModel.findOne({ username });
+
+    if (!user) {
+      return null;
+    }
+
+    return user;
   }
 }
