@@ -17,11 +17,15 @@ export class AuthService {
   ) {}
 
   async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
-    const { username, password } = authCredentialsDto;
+    const { username, password, name } = authCredentialsDto;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = new this.userModel({ username, password: hashedPassword });
+    const user = new this.userModel({
+      username,
+      name,
+      password: hashedPassword,
+    });
 
     try {
       await user.save();
